@@ -1,9 +1,5 @@
-// questo contratto serve per mettere, togliere, aggiungere interesse
-// a token dallo staking, può essere usato anche per aggiungerne altri
-// inoltre ci servira un pricefeed per capire il loro valore quando
-// si aggiornano
+// SPDX-License-Identifier: MIT
 
-// SPDX-Licence-Identifier: MIT
 pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
@@ -11,6 +7,11 @@ import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
 
 contract TokenFarm is Ownable {
+    // questo contratto serve per mettere, togliere, aggiungere interesse
+    // a token dallo staking, può essere usato anche per aggiungerne altri
+    // inoltre ci servira un pricefeed per capire il loro valore quando
+    // si aggiornano
+
     // lista dei token autorizzati
     address[] public allowedTokens;
     // array che tiene conto quanto token qualcuno ha messo in staking
@@ -46,11 +47,11 @@ contract TokenFarm is Ownable {
             stakersIndex <= stakers.length;
             stakersIndex++
         ) {
-            address recepient = stakers[stakersIndex];
+            address recipient = stakers[stakersIndex];
             // ci serve sapere quale è l'address del contratto del token da mandare
             // glie lo diamo da python quando deployamo il nostro contratto per il
             // token Dapp
-            uint256 userTotalValue = getUserTotalValue(recepient);
+            uint256 userTotalValue = getUserTotalValue(recipient);
             dappToken.transfer(recipient, userTotalValue);
         }
     }
@@ -95,11 +96,11 @@ contract TokenFarm is Ownable {
     {
         // questa funzione usa l'AggregatorV3Interface di chainlink per prendere
         // il prezzo di un singolo token in dollari e suoi decimali
-        address priceFeedAddress = tokenPriceFeeMapping[_token];
+        address priceFeedAddress = tokenPriceFeedMapping[_token];
         AggregatorV3Interface priceFeed = AggregatorV3Interface(
             priceFeedAddress
         );
-        (, uint256 price, , , ) = priceFeed.latestRoundData();
+        (, int256 price, , , ) = priceFeed.latestRoundData();
         uint256 decimals = uint256(priceFeed.decimals());
         return (uint256(price), decimals);
     }
@@ -153,5 +154,16 @@ contract TokenFarm is Ownable {
         if (uniqueTokensStaked[msg.sender] == 1) {
             stakers.push(msg.sender);
         }
+    }
+
+    function unstakeTokens(address _token) public {
+        // questa funzione guarda quanto un utente ha in staking
+        // per poi permettergli di ritirarlo
+        uint256 balance = stakingBalance[_token][msg.sender];
+        require(balance > 0, "Staking balance cannot be 0");
+        IERC20(_token).transfer(msg.sender, balance);
+        stakingBalance[_token][msg.sender] = 0;
+        uniqueTokensStaked[msg.sender] = uniqueTokensStaked[msg.sender] - 1;
+
     }
 }
