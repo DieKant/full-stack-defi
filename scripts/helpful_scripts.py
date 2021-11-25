@@ -11,9 +11,10 @@ import eth_utils
 
 LOCAL_BLOCKCHAIN_ENVIRONMENTS = ["development", "ganache-local", "mainnet-fork"]
 DECIMALS = 8
-STARTING_VALUE = 200000000000
+INITIAL_PRICE_FEED_VALUE = 2000000000000000000000
 # usiamo questa funzione per scegliere tra account per il development
 # con l'index posso poi decidere quale account usare usandolo come posizione
+
 
 
 def get_account(index=None, id=None):
@@ -62,7 +63,7 @@ def get_contract(contract_name):
     return contract
 
 
-def deploy_mocks(decimals=DECIMALS, inital_value=STARTING_VALUE):
+def deploy_mocks(decimals=DECIMALS, inital_value=INITIAL_PRICE_FEED_VALUE):
     account = get_account()
     # il to.wei aggiunge 18 decimali dopo il numero che gli diamo, also facciamo il deploy del mock solo una volta e prendiamo quello più recente
     mock_price_feed = MockV3Aggregator.deploy(decimals, inital_value, {"from": account})

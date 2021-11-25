@@ -1,6 +1,7 @@
 from brownie import network, exceptions
 from scripts.helpful_scripts import (
     LOCAL_BLOCKCHAIN_ENVIRONMENTS,
+    INITIAL_PRICE_FEED_VALUE,
     get_account,
     get_contract,
 )
@@ -44,5 +45,21 @@ def test_stake_tokens(amount_staked):
     assert token_farm.stakers(0) == account.address
     return token_farm, dapp_token
 
-def test_issue_tokens():
-    pass
+
+def test_issue_tokens(amount_staked):
+    # arrange
+    if network.show_active() not in LOCAL_BLOCKCHAIN_ENVIRONMENTS:
+        pytest.skip("Only for local tests")
+    account = get_account()
+    token_farm, dapp_token = test_stake_tokens(amount_staked)
+    starting_balance = dapp_token.balanceOf(account.address)
+    # act
+    tx = token_farm.issueTokens({"from": account})
+    tx.wait(1)
+    # assert
+    # 1 dapp token = è uguale a una singola unita del prezzo di 1 eth
+    # se eth vale 2000$ allora 2000 dapp tokens = 1 eth
+    assert (
+        dapp_token.balanceOf(account.address)
+        == starting_balance + INITIAL_PRICE_FEED_VALUE
+    )
