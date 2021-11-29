@@ -53,6 +53,8 @@ def test_issue_tokens(amount_staked):
     account = get_account()
     token_farm, dapp_token = test_stake_tokens(amount_staked)
     starting_balance = dapp_token.balanceOf(account.address)
+    print(starting_balance)
+    print(INITIAL_PRICE_FEED_VALUE)
     # act
     tx = token_farm.issueTokens({"from": account})
     tx.wait(1)

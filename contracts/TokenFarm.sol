@@ -3,7 +3,7 @@
 pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
 
 contract TokenFarm is Ownable {
@@ -12,18 +12,19 @@ contract TokenFarm is Ownable {
     // inoltre ci servira un pricefeed per capire il loro valore quando
     // si aggiornano
 
-    // lista dei token autorizzati
-    address[] public allowedTokens;
     // array che tiene conto quanto token qualcuno ha messo in staking
     mapping(address => mapping(address => uint256)) public stakingBalance;
-    // array degli stakers
-    address[] public stakers;
     // mapping per tenere conto di quanti token stakati qualcuno possiede
     mapping(address => uint256) public uniqueTokensStaked;
-    // il nostro token ricompensa
-    IERC20 public dappToken;
     // mapping usa l'address di un token come indice per il suo contratto di price_feed
     mapping(address => address) public tokenPriceFeedMapping;
+     // array degli stakers
+    address[] public stakers;
+    // lista dei token autorizzati
+    address[] public allowedTokens;
+    // il nostro token ricompensa
+    IERC20 public dappToken;
+    
 
     constructor(address _dappTokenAddress) public {
         // creo il token ricompensa
@@ -44,7 +45,7 @@ contract TokenFarm is Ownable {
         // interessi su n token (il rateo è 1 dapp per 1 ether/tutto staked)
         for (
             uint256 stakersIndex = 0;
-            stakersIndex <= stakers.length;
+            stakersIndex < stakers.length;
             stakersIndex++
         ) {
             address recipient = stakers[stakersIndex];
@@ -73,6 +74,7 @@ contract TokenFarm is Ownable {
                 allowedTokens[allowedTokensIndex]
             );
         }
+        return totalValue;
     }
 
     function getUserSingleTokenValue(address _user, address _token)
@@ -128,7 +130,7 @@ contract TokenFarm is Ownable {
         return false;
     }
 
-    function addAllowedToken(address _token) public onlyOwner {
+    function addAllowedTokens(address _token) public onlyOwner {
         // questa funzione aumenta il numero di token autorizzati
         // allo staking, solo l'admin può usarla
         allowedTokens.push(_token);

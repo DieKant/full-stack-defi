@@ -10,7 +10,7 @@ from brownie import (
 import eth_utils
 
 LOCAL_BLOCKCHAIN_ENVIRONMENTS = ["development", "ganache-local", "mainnet-fork"]
-DECIMALS = 8
+DECIMALS = 18
 INITIAL_PRICE_FEED_VALUE = 2000000000000000000000
 # usiamo questa funzione per scegliere tra account per il development
 # con l'index posso poi decidere quale account usare usandolo come posizione

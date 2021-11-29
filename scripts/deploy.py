@@ -4,7 +4,6 @@ from web3 import Web3
 
 KEPT_BALANCE = Web3.toWei(100, "ether")
 
-
 def deploy_token_farm_and_dapp_token():
     account = get_account()
     dapp_token = DappToken.deploy({"from": account})
@@ -30,14 +29,10 @@ def deploy_token_farm_and_dapp_token():
 
 def add_allowed_tokens(token_farm, dict_of_allowed_tokens, account):
     for token in dict_of_allowed_tokens:
-        add_tx = token_farm.addAllowedToken(token.address, {"from": account})
+        add_tx = token_farm.addAllowedTokens(token.address, {"from": account})
         add_tx.wait(1)
         set_tx = token_farm.setPriceFeedContract(
             token.address, dict_of_allowed_tokens[token], {"from": account}
         )
         set_tx.wait(1)
     return token_farm
-
-
-def main():
-    deploy_token_farm_and_dapp_token()
