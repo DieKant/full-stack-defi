@@ -39,6 +39,28 @@ contract TokenFarm is Ownable {
         tokenPriceFeedMapping[_token] = _priceFeed;
     }
 
+    function stakeTokens(uint256 _amount, address _token) public {
+        // questa funzione permette di fare stake di tokens
+        // rispettando i limiti di "quanto"(controllato dal require)
+        // e "quali" (controllato dalla funzione tokenIsAllowed)
+        require(_amount > 0, "Amount must be more than 0");
+        require(tokenIsAllowed(_token), "Token is currently not allowed");
+        // se il token è stakabile e ha l'amount giusto faccio apparire una richiesta
+        // di transazione all'owner dell'account che vuole stakare a questo contratto
+        IERC20(_token).transferFrom(msg.sender, address(this), _amount);
+        // controllo se l'utente va aggiunto alla lista degli staker
+        // se ha 0 token validi stakati altrimenti non lo aggiungo
+        updateUniqueTokensStaked(msg.sender, _token);
+        // dopodiche aggiungo l'amount a un array per non scordarmi
+        // quanto qualcuno ha stakato e di cosa
+        stakingBalance[_token][msg.sender] += _amount;
+        // se è la prima volta che l'utente staka qualcosa lo
+        // aggiungo all'array di stakers
+        if (uniqueTokensStaked[msg.sender] == 1) {
+            stakers.push(msg.sender);
+        }
+    }
+
     function issueTokens() public onlyOwner {
         // da dei token come interesse per lo staking degli staker
         // per farlo ciclo tra gli staker e gli mando n tokens di
@@ -134,28 +156,6 @@ contract TokenFarm is Ownable {
         // questa funzione aumenta il numero di token autorizzati
         // allo staking, solo l'admin può usarla
         allowedTokens.push(_token);
-    }
-
-    function stakeTokens(uint256 _amount, address _token) public {
-        // questa funzione permette di fare stake di tokens
-        // rispettando i limiti di "quanto"(controllato dal require)
-        // e "quali" (controllato dalla funzione tokenIsAllowed)
-        require(_amount > 0, "Amount must be more than 0");
-        require(tokenIsAllowed(_token), "Token is currently not allowed");
-        // se il token è stakabile e ha l'amount giusto faccio apparire una richiesta
-        // di transazione all'owner dell'account che vuole stakare a questo contratto
-        IERC20(_token).transferFrom(msg.sender, address(this), _amount);
-        // controllo se l'utente va aggiunto alla lista degli staker
-        // se ha 0 token validi stakati altrimenti non lo aggiungo
-        updateUniqueTokensStaked(msg.sender, _token);
-        // dopodiche aggiungo l'amount a un array per non scordarmi
-        // quanto qualcuno ha stakato e di cosa
-        stakingBalance[_token][msg.sender] += _amount;
-        // se è la prima volta che l'utente staka qualcosa lo
-        // aggiungo all'array di stakers
-        if (uniqueTokensStaked[msg.sender] == 1) {
-            stakers.push(msg.sender);
-        }
     }
 
     function unstakeTokens(address _token) public {

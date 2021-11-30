@@ -65,3 +65,70 @@ def test_issue_tokens(amount_staked):
         dapp_token.balanceOf(account.address)
         == starting_balance + INITIAL_PRICE_FEED_VALUE
     )
+
+
+def test_get_user_total_value_with_different_tokens(amount_staked, random_ERC20):
+    # arrange
+    if network.show_active() not in LOCAL_BLOCKCHAIN_ENVIRONMENTS:
+        pytest.skip("Only for local tests")
+    account = get_account()
+    token_farm, dapp_token = test_stake_tokens(amount_staked)
+    # act
+    add_tx = token_farm.addAllowedTokens(random_ERC20.address, {"from": account})
+    add_tx.wait(1)
+    set_tx = token_farm.setPriceFeedContract(
+            random_ERC20.address, get_contract("eth_usd_price_feed"), {"from": account}
+        )
+    set_tx.wait(1)
+    txa = random_ERC20.approve(token_farm.address, amount_staked, {"from": account})
+    txa.wait(1)
+    txb = token_farm.stakeTokens(amount_staked, random_ERC20.address, {"from": account})
+    txb.wait(1)
+    # assert
+    total_value = token_farm.getUserTotalValue(account.address)
+    assert total_value == INITIAL_PRICE_FEED_VALUE * 2 
+    
+
+
+def test_get_token_value(amount_staked):
+    # arrange
+    if network.show_active() not in LOCAL_BLOCKCHAIN_ENVIRONMENTS:
+        pytest.skip("Only for local tests")
+    account = get_account()
+    token_farm, dapp_token = test_stake_tokens(amount_staked)
+    # act
+    token_value, decimals = token_farm.getTokenValue(dapp_token.address)
+    # assert
+    assert token_value == INITIAL_PRICE_FEED_VALUE
+
+
+def test_add_allowed_tokens():
+    # arrange
+    
+    # act
+    
+    # assert
+    pass
+
+
+def test_unstake_tokens():
+    # arrange
+    
+    # act
+    
+    # assert
+    pass
+
+
+"""
+def test_get_user_total_value(amount_staked):
+    # arrange
+    if network.show_active() not in LOCAL_BLOCKCHAIN_ENVIRONMENTS:
+        pytest.skip("Only for local tests")
+    account = get_account()
+    # act
+    token_farm, dapp_token = test_stake_tokens(amount_staked)
+    # assert
+    assert token_farm.getUserTotalValue(account.address) == INITIAL_PRICE_FEED_VALUE
+
+"""
