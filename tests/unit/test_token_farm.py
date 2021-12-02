@@ -2,9 +2,11 @@ from brownie import network, exceptions
 from scripts.helpful_scripts import (
     LOCAL_BLOCKCHAIN_ENVIRONMENTS,
     INITIAL_PRICE_FEED_VALUE,
+    DECIMALS,
     get_account,
     get_contract,
 )
+from scripts.deploy import KEPT_BALANCE
 from scripts.deploy import deploy_token_farm_and_dapp_token
 import pytest
 
@@ -23,9 +25,10 @@ def test_set_price_feed_contract():
     # assert
     assert token_farm.tokenPriceFeedMapping(dapp_token.address) == price_feed_address
     with pytest.raises(exceptions.VirtualMachineError):
-        token_farm.setPriceFeedContract(
+        tx = token_farm.setPriceFeedContract(
             dapp_token.address, price_feed_address, {"from": non_owner}
         )
+        tx.wait(1)
 
 
 def test_stake_tokens(amount_staked):
@@ -100,24 +103,45 @@ def test_get_token_value(amount_staked):
     token_value, decimals = token_farm.getTokenValue(dapp_token.address)
     # assert
     assert token_value == INITIAL_PRICE_FEED_VALUE
+    assert decimals == DECIMALS
 
 
-def test_add_allowed_tokens():
+def test_add_allowed_tokens(amount_staked, random_ERC20):
     # arrange
-    
+    if network.show_active() not in LOCAL_BLOCKCHAIN_ENVIRONMENTS:
+        pytest.skip("Only for local tests")
+    account = get_account()
+    non_owner = get_account(index=1)
+    token_farm, dapp_token = test_stake_tokens(amount_staked)
     # act
-    
+    add_tx = token_farm.addAllowedTokens(random_ERC20.address, {"from": account})
+    add_tx.wait(1)
     # assert
-    pass
+    # qui ho messo posizione 3(quarta posizione nell'array) 
+    # perche nello script di deploy ce ne sono gia 3 di tokens
+    # e non so come mai ma non prende -1 per prendere l'ultima
+    # var dell'array
+    assert token_farm.allowedTokens(3) == random_ERC20.address
+    with pytest.raises(exceptions.VirtualMachineError):
+        tx = token_farm.addAllowedTokens(dapp_token.address, {"from": non_owner})
+        tx.wait(1)
 
 
-def test_unstake_tokens():
+def test_unstake_tokens(amount_staked):
     # arrange
-    
+    if network.show_active() not in LOCAL_BLOCKCHAIN_ENVIRONMENTS:
+        pytest.skip("Only for local tests")
+    account = get_account()
+    token_farm, dapp_token = test_stake_tokens(amount_staked)
     # act
-    
+    tx = token_farm.unstakeTokens(dapp_token.address, {"from": account})
+    tx.wait(1)
     # assert
-    pass
+    assert (
+        token_farm.stakingBalance(dapp_token.address, account.address) == 0
+    )
+    assert token_farm.uniqueTokensStaked(account.address) == 0
+    assert dapp_token.balanceOf(account.address) == KEPT_BALANCE
 
 
 """
