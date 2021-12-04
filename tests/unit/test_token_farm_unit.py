@@ -13,6 +13,8 @@ import pytest
 
 def test_set_price_feed_contract():
     # arrange
+    if network.show_active() not in LOCAL_BLOCKCHAIN_ENVIRONMENTS:
+        pytest.skip("Only for local tests")
     account = get_account()
     non_owner = get_account(index=1)
     token_farm, dapp_token = deploy_token_farm_and_dapp_token()
@@ -56,8 +58,6 @@ def test_issue_tokens(amount_staked):
     account = get_account()
     token_farm, dapp_token = test_stake_tokens(amount_staked)
     starting_balance = dapp_token.balanceOf(account.address)
-    print(starting_balance)
-    print(INITIAL_PRICE_FEED_VALUE)
     # act
     tx = token_farm.issueTokens({"from": account})
     tx.wait(1)
