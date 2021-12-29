@@ -1,4 +1,4 @@
-from brownie import network, exceptions
+from brownie import network, exceptions, config
 from scripts.helpful_scripts import (
     LOCAL_BLOCKCHAIN_ENVIRONMENTS,
     INITIAL_PRICE_FEED_VALUE,
@@ -142,9 +142,13 @@ def test_unstake_tokens(amount_staked):
     )
     assert token_farm.uniqueTokensStaked(account.address) == 0
     assert dapp_token.balanceOf(account.address) == KEPT_BALANCE
-
-
+    
 """
+def test_dio_merda():
+    bestia = config["networks"][network.show_active()]["verify"]
+    assert bestia == True
+
+
 def test_get_user_total_value(amount_staked):
     # arrange
     if network.show_active() not in LOCAL_BLOCKCHAIN_ENVIRONMENTS:

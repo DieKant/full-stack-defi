@@ -1,6 +1,7 @@
 import React from 'react';
 import { ChainId, DAppProvider } from "@usedapp/core"
 import { Header } from "./components/Header"
+import { Container } from "@material-ui/core"
 
 function App() {
   /*
@@ -12,11 +13,17 @@ function App() {
     1337 è per il nostro ganache locale
   */
   return (
-    <DAppProvider config={{
-      supportedChains: [ChainId.Kovan, ChainId.Rinkeby, 1337]
-    }}>
+    <DAppProvider
+      config={{
+        supportedChains: [ChainId.Kovan, ChainId.Rinkeby, 1337]
+      }}
+    >
       <Header />
-      <div>Hi!</div>
+      <Container
+        maxWidth="md"
+      >
+        <div>Hi!</div>
+      </Container>
     </DAppProvider>
   );
 }
