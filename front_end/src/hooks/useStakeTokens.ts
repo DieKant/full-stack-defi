@@ -26,7 +26,7 @@ export const useStateTokens = (tokenAddress: string) => {
     // con questo gestisco la richiesta
     const { send: approveErc20Send, state: approveErc20State } =
         useContractFunction(erc20Contract, "approve", {
-            transactionName: "approve erc20 transfare",
+            transactionName: "Approve erc20 transfare",
         })
     // con questo la chiamo
     const approveAndStake = (amount: string) => {
@@ -38,7 +38,7 @@ export const useStateTokens = (tokenAddress: string) => {
     // trasferimento
     const { send: stakeSend, state: stakeState } =
         useContractFunction(tokenFarmContract, "stakeTokens", {
-            transactionName: "stake tokens",
+            transactionName: "Stake tokens",
         })
     const [amountToStake, setAmountToStake] = useState("0")
 
@@ -56,5 +56,16 @@ export const useStateTokens = (tokenAddress: string) => {
 
     // dichiaro questo come hook cosi lo passo con nome semplificato
     const [state, setState] = useState(approveErc20State)
+
+    //
+    useEffect(() => {
+        if (approveErc20State.status === "Success"){
+            setState(stakeState)
+        } else {
+            setState(approveErc20State)
+        }
+    }, [approveErc20State, stakeState])
+
+
     return { approveAndStake, state }
 }

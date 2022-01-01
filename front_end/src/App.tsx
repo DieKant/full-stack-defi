@@ -16,7 +16,13 @@ function App() {
   return (
     <DAppProvider
       config={{
-        supportedChains: [ChainId.Kovan]
+        supportedChains: [ChainId.Kovan],
+        // questo controlla ogni secondo lo stato della nostra
+        // transazione
+        notifications: {
+          expirationPeriod: 1000,
+          checkInterval: 1000
+        }
       }}
     >
       <Header />
