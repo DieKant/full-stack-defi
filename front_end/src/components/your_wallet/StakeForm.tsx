@@ -28,10 +28,10 @@ export const StakeForm = ({ token } : StakeFormProps) => {
         console.log(newAmount)
     }
 
-    const {approve, state} = useStateTokens(tokenAddress)
+    const {approveAndStake, state} = useStateTokens(tokenAddress)
     const handleStakeSubmit = () => {
         const amountAsWei = utils.parseEther(amount.toString())
-        return approve(amountAsWei.toString())
+        return approveAndStake(amountAsWei.toString())
     }
 
     // creiamo una campo input e tracciamo il suo valore
