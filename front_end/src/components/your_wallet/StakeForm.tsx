@@ -1,11 +1,12 @@
 
 import { formatUnits } from "@ethersproject/units"
-import { Button, Input, CircularProgress } from "@material-ui/core"
+import { Button, Input, CircularProgress, Snackbar } from "@material-ui/core"
 import { useEthers, useTokenBalance, useNotifications } from "@usedapp/core"
 import React, { useEffect, useState } from "react"
 import { useStateTokens } from "../../hooks/useStakeTokens"
 import { Token } from "../Main"
 import { utils } from "ethers"
+import Alert  from "@material-ui/lab/Alert"
 
 export interface StakeFormProps {
     token: Token
@@ -38,7 +39,16 @@ export const StakeForm = ({ token } : StakeFormProps) => {
 
     // creiamo un meccanismo per mostrare le notifiche a schermo oltre che in console log
     const isMining = approveErc20State.status === "Mining"
-
+    
+    // creo dei nuovo hook per tracciare lo stato delle transazioni
+    const [showErc20ApprovalSuccess, setShowErc20ApprovalSuccess] = useState(false)
+    const [showStakeTokenSuccess, setShowStakeTokenSuccess] = useState(false)
+    
+    // creo la funzione per chiudere gli alert snack
+    const handelCloseSnack = () => {
+        setShowErc20ApprovalSuccess(false)
+        setShowStakeTokenSuccess(false)
+    }
 
     // traccio se le notifications cambiano per fare un output a schermo
     useEffect(() => {
@@ -46,32 +56,54 @@ export const StakeForm = ({ token } : StakeFormProps) => {
             (notification) => 
                 notification.type === "transactionSucceed" &&
                 notification.transactionName === "Approve erc20 transfare").length > 0) {
-                    console.log("Approved")
+                    setShowErc20ApprovalSuccess(true)
+                    setShowStakeTokenSuccess(false)
         }
 
         if(notifications.filter(
             (notification) => 
                 notification.type === "transactionSucceed" &&
                 notification.transactionName === "Stake tokens").length > 0) {
-                    console.log("Tokens staked")
+                    setShowErc20ApprovalSuccess(false)
+                    setShowStakeTokenSuccess(true)
         }
         
-    }, [notifications])
+    }, [notifications, showErc20ApprovalSuccess, showStakeTokenSuccess])
 
     // creiamo una campo input e tracciamo il suo valore
     return (
         <>
-            <Input 
-                onChange={handleInputChange}
-            />
-            <Button
-                onClick={handleStakeSubmit}
-                color="primary"
-                size="large"
-                disabled={isMining}
+            <div>
+                <Input 
+                    onChange={handleInputChange}
+                />
+                <Button
+                    onClick={handleStakeSubmit}
+                    color="primary"
+                    size="large"
+                    disabled={isMining}
+                >
+                    {isMining ? <CircularProgress size={26} /> : "Stake!"}
+                </Button>
+            </div>
+            <Snackbar
+                open={showErc20ApprovalSuccess}
+                autoHideDuration={5000}
+                onClose={handelCloseSnack}
             >
-                {isMining ? <CircularProgress size={26} /> : "Stake!"}
-            </Button>
+                <Alert onClose={handelCloseSnack} severity="success">
+                    ERC20 token transfer approved, now approve the second transaction
+                </Alert>
+            </Snackbar>
+            <Snackbar
+                open={showStakeTokenSuccess}
+                autoHideDuration={5000}
+                onClose={handelCloseSnack}
+            >
+                <Alert onClose={handelCloseSnack} severity="success">
+                    Tokens staked!
+                </Alert>
+            </Snackbar>
         </>
     )
 }
