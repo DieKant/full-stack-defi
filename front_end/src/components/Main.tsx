@@ -8,12 +8,21 @@ import dapp from "../dapp.png"
 import ethers from "../eth.png"
 import dai from "../dai.png"
 import { YourWallet } from "./your_wallet/YourWallet";
+import { makeStyles } from "@material-ui/core";
 
 export type Token = {
     image: string
     address: string
     name: string
 }
+
+const useStyles = makeStyles((theme) => ({
+    title: {
+        color: theme.palette.common.white,
+        textAlign: "center",
+        padding: theme.spacing(4)
+    }
+}))
 
 export const Main = () => {
     // mostra valori token dal wallet
@@ -32,7 +41,7 @@ export const Main = () => {
     const networkName = chainId ? helperConfig[chainId] : "dev"
     console.log(chainId);
     console.log(networkName);
-
+    const classes = useStyles()
     const dappTokenAddress = chainId ? networkMapping[String(chainId)]["DappToken"][0] : constants.AddressZero
     const wethTokenAddress = chainId ? brownieConfig["networks"][networkName]["weth_token"] : constants.AddressZero
     const fauTokenAddress = chainId ? brownieConfig["networks"][networkName]["fau_token"] : constants.AddressZero
@@ -56,5 +65,10 @@ export const Main = () => {
 
     ]
     // la mando a YourWallet
-    return (<YourWallet supportedTokens={supportedTokens} />)
+    return (
+        <>
+            <h2 className={classes.title}>Dapp Token App</h2>
+            <YourWallet supportedTokens={supportedTokens} />
+        </>
+    )
 }
