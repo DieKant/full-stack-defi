@@ -1,1 +1,1 @@
-export {YourWallet} from "./YourWallet"
+export {YourUnstakedWallet} from "./YourUnstakedWallet"
