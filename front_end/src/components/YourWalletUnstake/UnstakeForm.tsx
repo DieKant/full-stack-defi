@@ -3,7 +3,7 @@ import { formatUnits } from "@ethersproject/units"
 import { Button, Input, CircularProgress, Snackbar } from "@material-ui/core"
 import { useEthers, useTokenBalance, useNotifications } from "@usedapp/core"
 import React, { useEffect, useState } from "react"
-import { useStateTokens } from "../../hooks/useStakeTokens"
+import { useUnstakeTokens } from "../../hooks/useUnstakeTokens"
 import { Token } from "../Main"
 import { utils } from "ethers"
 import Alert  from "@material-ui/lab/Alert"
@@ -30,7 +30,7 @@ export const UnstakeForm = ({ token } : UnstakeFormProps) => {
         console.log(newAmount)
     }
 
-    const {approveAndStake, state: approveErc20State} = useStateTokens(tokenAddress)
+    const {approveAndStake, state: approveErc20State} = useUnstakeTokens(tokenAddress)
     const handleStakeSubmit = () => {
         const amountAsWei = utils.parseEther(amount.toString())
         return approveAndStake(amountAsWei.toString())

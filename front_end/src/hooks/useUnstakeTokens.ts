@@ -6,7 +6,7 @@ import { constants, utils } from "ethers";
 import { Contract } from "@ethersproject/contracts";
 import { useState, useEffect } from "react";
 
-export const useStakeTokens = (tokenAddress: string) => {
+export const useUnstakeTokens = (tokenAddress: string) => {
     // per fare le prossime 2 funzioni ci vuole address, abi e chainId
     const { chainId } = useEthers()
     const { abi } = TokenFarm
