@@ -7,8 +7,8 @@ import { type } from "os";
 import dapp from "../dapp.png"
 import ethers from "../eth.png"
 import dai from "../dai.png"
-import { YourUnstakedWallet } from "./your_wallet/YourUnstakedWallet";
-import { YourStakedWallet } from "./your_wallet_unstake/YourStakedWallet";
+import { YourUnstakedWallet } from "./YourWallet/YourUnstakedWallet";
+import { YourStakedWallet } from "./YourWalletUnstake/YourStakedWallet";
 import { makeStyles } from "@material-ui/core";
 
 export type Token = {
