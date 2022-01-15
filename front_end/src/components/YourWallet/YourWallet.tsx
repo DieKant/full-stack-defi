@@ -4,7 +4,7 @@ import { Box, Tab, makeStyles } from "@material-ui/core"
 import { TabContext, TabList, TabPanel } from "@material-ui/lab"
 import React, { useState } from "react"
 import {WalletBalance} from "./WalletBalance"
-import { UnstakeForm } from "./UnstakeForm"
+import { StakeForm } from "./StakeForm"
 
 interface YourWalletProps {
     supportedTokens : Array<Token>
@@ -19,7 +19,7 @@ const useStyles = makeStyles((theme) => ({
     },
     box: {
         backgroundColor: "white",
-        borderRadius: "25px",
+        borderRadius: "25px"
     },
     header: {
         color: "white"
@@ -30,7 +30,7 @@ const useStyles = makeStyles((theme) => ({
 }))
 
 // usiamo box e tabs di materail ui per creare il nostro forntend
-export const YourStakedWallet = ({ supportedTokens } : YourWalletProps) => {
+export const YourWallet = ({ supportedTokens } : YourWalletProps) => {
 
     // questo crea una selezione di default per settare la tab predefinita
     const [selectedTokenIndex, setselectedTokenIndex] = useState<number>(0)
@@ -44,7 +44,7 @@ export const YourStakedWallet = ({ supportedTokens } : YourWalletProps) => {
     return(
         <div className={classes.div}>
             <Box>
-                <h1 className={classes.header}> Your staked wallet! </h1>
+                <h1 className={classes.header}> Your unstaked wallet! </h1>
                 <Box className={classes.box}>
                     <TabContext
                         value = {selectedTokenIndex.toString()}
@@ -73,7 +73,7 @@ export const YourStakedWallet = ({ supportedTokens } : YourWalletProps) => {
                                     >                      
                                         <div className={classes.tabContent}>
                                             <WalletBalance token={supportedTokens[selectedTokenIndex]}/>
-                                            <UnstakeForm token={supportedTokens[selectedTokenIndex]}/>
+                                            <StakeForm token={supportedTokens[selectedTokenIndex]}/>
                                         </div>
                                     </TabPanel>
                                 )

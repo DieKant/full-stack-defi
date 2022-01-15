@@ -7,9 +7,9 @@ import { type } from "os";
 import dapp from "../dapp.png"
 import ethers from "../eth.png"
 import dai from "../dai.png"
-import { YourUnstakedWallet } from "./YourWallet/YourUnstakedWallet";
-import { YourStakedWallet } from "./YourWalletUnstake/YourStakedWallet";
+import { YourWallet } from "./YourWallet/YourWallet";
 import { makeStyles } from "@material-ui/core";
+import { TokenFarmContract } from "./TokenFarm";
 
 export type Token = {
     image: string
@@ -69,8 +69,8 @@ export const Main = () => {
     return (
         <>
             <h2 className={classes.title}>Dapp Token App</h2>
-            <YourUnstakedWallet supportedTokens={supportedTokens} />
-            <YourStakedWallet supportedTokens={supportedTokens} />
+            <YourWallet supportedTokens={supportedTokens} />
+            <TokenFarmContract supportedTokens={supportedTokens} />
         </>
     )
 }

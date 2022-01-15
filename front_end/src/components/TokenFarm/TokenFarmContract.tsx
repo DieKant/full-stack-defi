@@ -1,13 +1,11 @@
-// prende il bilacio dei token dal nostro wallet per il sito
 import { Token } from "../Main"
 import { Box, Tab, makeStyles } from "@material-ui/core"
 import { TabContext, TabList, TabPanel } from "@material-ui/lab"
 import React, { useState } from "react"
-import {WalletBalance} from "./WalletBalance"
-import { StakeForm } from "./StakeForm"
+import { UnstakeForm } from "../TokenFarm/UnstakeForm"
 
-interface YourWalletProps {
-    supportedTokens : Array<Token>
+interface TokenFarmContractProps {
+    supportedTokens: Array<Token>
 }
 
 const useStyles = makeStyles((theme) => ({
@@ -29,10 +27,13 @@ const useStyles = makeStyles((theme) => ({
     }
 }))
 
-// usiamo box e tabs di materail ui per creare il nostro forntend
-export const YourUnstakedWallet = ({ supportedTokens } : YourWalletProps) => {
-
-    // questo crea una selezione di default per settare la tab predefinita
+export const TokenFarmContract = (
+        {
+            supportedTokens,
+        }
+        : TokenFarmContractProps
+    ) => {
+            // questo crea una selezione di default per settare la tab predefinita
     const [selectedTokenIndex, setselectedTokenIndex] = useState<number>(0)
 
     const handleChange = (event: React.ChangeEvent<{}>, newValue: string) => {
@@ -44,7 +45,7 @@ export const YourUnstakedWallet = ({ supportedTokens } : YourWalletProps) => {
     return(
         <div className={classes.div}>
             <Box>
-                <h1 className={classes.header}> Your unstaked wallet! </h1>
+                <h1 className={classes.header}> Your staked wallet! </h1>
                 <Box className={classes.box}>
                     <TabContext
                         value = {selectedTokenIndex.toString()}
@@ -72,8 +73,7 @@ export const YourUnstakedWallet = ({ supportedTokens } : YourWalletProps) => {
                                         key={index}
                                     >                      
                                         <div className={classes.tabContent}>
-                                            <WalletBalance token={supportedTokens[selectedTokenIndex]}/>
-                                            <StakeForm token={supportedTokens[selectedTokenIndex]}/>
+                                            <UnstakeForm token={token}/>
                                         </div>
                                     </TabPanel>
                                 )
@@ -84,4 +84,4 @@ export const YourUnstakedWallet = ({ supportedTokens } : YourWalletProps) => {
             </Box>
         </div>
     )
-}
+  }
