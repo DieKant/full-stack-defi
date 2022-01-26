@@ -3,7 +3,6 @@ import helperConfig from "../helper-config.json"
 import networkMapping from "../chain-info/deployments/map.json"
 import { constants } from "ethers";
 import brownieConfig from "../brownie-config.json"
-import { type } from "os";
 import dapp from "../dapp.png"
 import ethers from "../eth.png"
 import dai from "../dai.png"

@@ -1,4 +1,3 @@
-
 import { formatUnits } from "@ethersproject/units"
 import { Button, Input, CircularProgress, Snackbar } from "@material-ui/core"
 import { useEthers, useTokenBalance, useNotifications } from "@usedapp/core"
