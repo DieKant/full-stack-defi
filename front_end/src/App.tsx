@@ -1,7 +1,8 @@
 import { ChainId, DAppProvider } from "@usedapp/core"
 import { Header } from "./components/Header"
 import { Container } from "@material-ui/core"
-import { Main } from './components/Main';
+import { Main } from './components/Main'
+import {useIssueTokens} from './hooks/useIssueTokens'
 
 function App() {
   /*
@@ -12,6 +13,7 @@ function App() {
 
     1337 è per il nostro ganache locale
   */
+  useIssueTokens()
   return (
     <DAppProvider
       config={{
