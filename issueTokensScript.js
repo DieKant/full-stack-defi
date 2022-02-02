@@ -1,28 +1,29 @@
 const { exec } = require("child_process");
+const cors = require('cors');
 const express = require('express');
-const res = require("express/lib/response");
-var cors = require('cors')
 
-// creo endpoint api
+// preparo endpoint get
 const app = express();
 const port = 3001;
 
-// disattivo i controlli di privacy
-app.use(cors())
+// disabilito controlli privacy
+app.use(cors());
 
-// creo cosa 
+// prendo data e ora
+let dateAndTime = null;
+// metto l'endpoint get response
 app.get('/', (req, res) => {
+    res.send(`Tokens issued on: ${dateAndTime}`);
+});
+app.listen(port, () => console.log(`Token issue script runnin on port ${port}!`))
 
-    // prendo data e ora
-    let dateAndTime = new Date().getFullYear() + '-'+ (new Date().getMonth()+1) + '-' + new Date().getDate() + '@' + new Date().getHours() + ":" + new Date().getMinutes() + ":" + new Date().getSeconds();
+// 300000 5 minuti
+setInterval(issueTokens, 60000);
 
-    res.send(
-        "Token issuing started at: " + dateAndTime
-    );
+function issueTokens() {
     
     // mando comando per il metodo issueTokens nel nostro contratto TokenFarm ogni 5 minuti
-    // brownie run .\scripts\issue_tokens.py --network kovan
-    exec("mkdir CartellaDiTestLollolollolol", (error, stdout) => {
+    exec(`brownie run scripts/issue_tokens.py --network kovan`, (error, stdout) => {
         if (error) {
             console.log(`error: ${error.message}`);
             return;
@@ -30,8 +31,6 @@ app.get('/', (req, res) => {
         console.log(`stdout: ${stdout}`);
     });
 
-});
-app.listen(port, () => console.log(`Issue token script running on port: ${port}!`))
-
-
-
+    // e resetto l'ora
+    dateAndTime = new Date().getFullYear() + '-'+ (new Date().getMonth()+1) + '-' + new Date().getDate() + '@' + new Date().getHours() + ':' + new Date().getMinutes() + ':' + new Date().getSeconds();
+}
